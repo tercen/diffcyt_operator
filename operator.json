@@ -1,0 +1,25 @@
+{
+  "name": "diffcyt",
+  "description": "Differential discovery in high-dimensional cytometry via high-resolution clustering",
+  "tags": ["flowcytometry", "rnaseq"],
+  "authors": ["tercen"],
+  "urls": ["https://github.com/tercen/diffcyt_operator"],
+  "properties": [
+    {
+    "kind": "EnumeratedProperty",
+    "name": "analysis_type",
+    "defaultValue": "DA",
+    "description": "Differential abundance.",
+    "values":[
+      "DA",
+      "DS"
+      ]
+    },
+    {
+    "kind": "DoubleProperty",
+    "name": "seed",
+    "defaultValue": -1.0,
+    "description": "Seed setting"
+  }
+  ]
+}
