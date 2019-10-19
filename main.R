@@ -1,8 +1,8 @@
 library(tercen)
 library(tidyverse)
 library(flowCore)
+library(SummarizedExperiment)
 library(diffcyt)
-
 
 ctx = tercenCtx()
 data = ctx$as.matrix() 
