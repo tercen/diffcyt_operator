@@ -1,4 +1,4 @@
-# asinh operator
+# diffcyt operator
 
 #### Description
 `diffcyt` operator a differential analysis of flow cyto data and indicates which marker and cluster combinations are relevant.
