@@ -9,7 +9,7 @@
     "kind": "EnumeratedProperty",
     "name": "analysis_type",
     "defaultValue": "DA",
-    "description": "Differential abundance.",
+    "description": "Differential analysis type.",
     "values":[
       "DA",
       "DS"

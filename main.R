@@ -5,6 +5,14 @@ library(SummarizedExperiment)
 library(diffcyt)
 
 ctx = tercenCtx()
+
+stopifnot("group_id"     %in% ctx$cnames, 
+          "patient_id"   %in% ctx$cnames,
+          "sample_id"    %in% ctx$cnames,
+          "marker_class" %in% ctx$rnames,
+          "marker_name"  %in% ctx$rnames)
+
+# get data as a matrix
 data = ctx$as.matrix() 
 
 # put row names on matrix
@@ -25,7 +33,7 @@ design <- createDesignMatrix(
 
 contrast <- createContrast(c(0, 1, rep(0, 7)))
 
-# initialize 
+# initialize
 seed = as.integer(ctx$op.value('seed'))
 if (seed>0) set.seed(seed)
 
@@ -37,7 +45,6 @@ d_input <- ctx$cselect() %>%
   sapply(function(x) data[x,])
 
 if (analysis_type == "DA") {
-  
   out_DA <- diffcyt(
     d_input = d_input, 
     experiment_info = experiment_info, 
@@ -59,23 +66,26 @@ if (analysis_type == "DA") {
 
 if (analysis_type == "DS") {
   out_DS <- diffcyt(
-    d_input = d_input, 
-    experiment_info = experiment_info, 
-    marker_info = marker_info, 
-    design = design, 
-    contrast = contrast, 
-    analysis_type = "DS", 
-    seed_clustering = seed, 
+    d_input = d_input,
+    experiment_info = experiment_info,
+    marker_info = marker_info,
+    design = design,
+    contrast = contrast,
+    analysis_type = "DS",
+    seed_clustering = seed,
     plot = FALSE
   )
   
   cluster_id    = rowData(out_DS$d_se)$cluster_id
-  cluster_table = data.frame(cluster_id, .ci = seq_len(nrow(data))-1)
+  cluster_table = data.frame(cluster_id, .ci = seq_len(nrow(data)) - 1)
   stats_table   = rowData(out_DS$res) %>% as.tibble
-  results_table = left_join(cluster_table, stats_table, by ="cluster_id")
-  marker_table  = marker_info %>% select(marker_name)  %>% mutate (.ri = seq_len(nrow(marker_info))-1)
-  results_table = left_join(results_table, marker_table, by = c("marker_id" = "marker_name"))
-  results_table = results_table %>% select(-marker_id, -ID)
+  results_table = left_join(cluster_table, stats_table, by = "cluster_id")
+  marker_table  = marker_info %>% select(marker_name)  %>% mutate(.ri = seq_len(nrow(marker_info)) -
+                                                                    1)
+  results_table = left_join(results_table,
+                            marker_table,
+                            by = c("marker_id" = "marker_name"))
+  results_table = results_table %>% select(-marker_id,-ID)
   
   results_table = ctx$addNamespace(results_table)
   ctx$save(results_table)
