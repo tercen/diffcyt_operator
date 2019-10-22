@@ -25,7 +25,7 @@ data = t(data)
 marker_info <- as.data.frame(ctx$rselect())
 
 experiment_info <- as.data.frame(ctx$cselect())
-experiment_info <- experiment_info %>% select(c(1,2,3)) %>% distinct()
+experiment_info <- experiment_info %>% select(patient_id, group_id, sample_id)  %>% distinct()
 
 design <- createDesignMatrix(
   experiment_info, cols_design = c("group_id", "patient_id")
@@ -57,7 +57,7 @@ if (analysis_type == "DA") {
   
   cluster_id    = rowData(out_DA$d_se)$cluster_id
   cluster_table = data.frame(cluster_id, .ci = seq_len(nrow(data))-1)
-  stats_table   = rowData(out_DA$res) %>% as.tibble
+  stats_table   = rowData(out_DA$res) %>% as_tibble
   results_table = left_join(cluster_table, stats_table, by ="cluster_id")
   
   results_table = ctx$addNamespace(results_table)
@@ -78,7 +78,7 @@ if (analysis_type == "DS") {
   
   cluster_id    = rowData(out_DS$d_se)$cluster_id
   cluster_table = data.frame(cluster_id, .ci = seq_len(nrow(data)) - 1)
-  stats_table   = rowData(out_DS$res) %>% as.tibble
+  stats_table   = rowData(out_DS$res) %>% as_tibble
   results_table = left_join(cluster_table, stats_table, by = "cluster_id")
   marker_table  = marker_info %>% select(marker_name)  %>% mutate(.ri = seq_len(nrow(marker_info)) -
                                                                     1)
