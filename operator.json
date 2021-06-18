@@ -1,5 +1,5 @@
 {
-  "name": "diffcyt",
+  "name": "Diffcyt",
   "description": "Differential discovery in high-dimensional cytometry via high-resolution clustering",
   "tags": ["flowcytometry", "rnaseq"],
   "authors": ["tercen"],
