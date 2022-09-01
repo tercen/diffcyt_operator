@@ -1,10 +1,22 @@
 {
-  "name": "Template_R_operator",
-  "description": "Calculate the mathematical average of the data points in a cell.",
-  "tags": ["basic statistics"],
+  "name": "diffcyt",
+  "description": "Statistical methods for differential discovery analyses in high-dimensional cytometry data.",
+  "tags": ["flow cytometry", "omics"],
   "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/template-R-operator-lite"],
-  "properties": []
+  "urls": ["https://github.com/tercen/diffcyt_operator"],
+  "container": ["tercen/diffcyt_operator"],
+  "properties": [
+  {
+    "kind": "EnumeratedProperty",
+    "name": "method",
+    "defaultValue": "DA_edgeR",
+    "values": [
+      "DA_edgeR",
+      "DA_GLMM"
+    ],
+    "description": "Statistical method to be used."
+  }
+  ]
 }
 
 
