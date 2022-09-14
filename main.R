@@ -38,6 +38,7 @@ counts <- df %>%
     id_cols = ".ri",
     names_from = ".ci",
     values_from = ".y",
+    values_fn = ~median(.x, na.rm = TRUE),
     values_fill = 0
   ) %>%
   select(-.ri) %>%
