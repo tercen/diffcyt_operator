@@ -140,7 +140,8 @@ if(method == "DA_edgeR") {
 
 rowData(res) %>% 
   as_tibble() %>%
-  mutate(.ri = as.integer(cluster_id) - 1) %>%
+  mutate(cluster_id = as.integer(cluster_id)) %>%
+  mutate(.ri = cluster_id - 1L) %>%
   select(-cluster_id) %>%
   ctx$addNamespace() %>%
   ctx$save()
