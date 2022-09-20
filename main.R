@@ -31,8 +31,8 @@ df <- ctx$select(unique(c(
   all_of(first_color), all_of(second_color), all_of(first_label)
 )))
 
-row_dat <- ctx$rselect() %>%
-  mutate(.ri = seq_len(nrow(.)) - 1)
+row_dat <- ctx$cselect() %>%
+  mutate(.ci = seq_len(nrow(.)) - 1)
 
 counts <- df %>%
   filter(.ri == 0) %>%
@@ -92,8 +92,6 @@ if(method == "DA_edgeR") {
 } else if(method == "DA_GLMM") {
   res <- testDA_GLMM(se, formula, contrast)
 } else {
-  colnames(row_dat)[2] <- "marker"
-  
   list_medians <- df %>%
     group_by(.ci, .ri, .x) %>%
     summarise(median = median(.y, na.rm = TRUE)) %>%
