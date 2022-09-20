@@ -8,8 +8,6 @@ suppressPackageStartupMessages({
 
 ctx = tercenCtx()
 
-if(length(ctx$rnames) < 2) stop("Two row factors are required.")
-
 method <- ctx$op.value("method", as.character, "DA_edgeR")
 
 first_color <- ctx$colors[[1]][[1]]
@@ -29,43 +27,33 @@ if(length(ctx$labels) > 0) {
 }
 
 df <- ctx$select(unique(c(
-  ".ri", ".ci", ".y", ".axisIndex", ".colorLevels",
+  ".ri", ".ci", ".y", ".x", ".colorLevels",
   all_of(first_color), all_of(second_color), all_of(first_label)
 )))
 
 row_dat <- ctx$rselect() %>%
   mutate(.ri = seq_len(nrow(.)) - 1)
 
-first_channel <- unique(row_dat[[2]])[1]
-.ri_idx <- row_dat[row_dat[[2]] == first_channel, ] %>%
-  select(.ri)
-
 counts <- df %>%
-  filter(.axisIndex == 0) %>%
-  inner_join(.ri_idx, ".ri") %>%
+  filter(.ri == 0) %>%
   tidyr::pivot_wider(
-    id_cols = ".ri",
-    names_from = ".ci",
+    id_cols = ".ci",
+    names_from = ".x",
     values_from = ".y",
     values_fn = list(.y = length),
     values_fill = 0
   ) %>%
-  select(-.ri) %>%
+  select(-.ci) %>%
   as.data.frame()
 
-
-colData <- ctx$cselect() %>% 
-  tidyr::unite("sample_id", sep = " - ") %>%
-  mutate(.ci = seq_len(nrow(.)) - 1)
-rowData <- row_dat[row_dat[[2]] == first_channel, ] %>%
+rowData <- row_dat %>%
   mutate(cluster_id = as.factor(as.numeric(factor(.[[1]])))) %>%
   as.data.frame()
 
 ### experimental design
-experiment_info <- df %>% select(c(".ci", all_of(first_color), all_of(first_label))) %>%
+experiment_info <- df %>% select(c(".x", all_of(first_color), all_of(first_label))) %>%
   unique() %>%
-  dplyr::rename(group_id = first_color, patient_id = first_label) %>%
-  full_join(colData, by = ".ci") %>%
+  dplyr::rename(sample_id = .x, group_id = first_color, patient_id = first_label) %>%
   as.data.frame()
 rownames(experiment_info) <- experiment_info$sample_id
 
@@ -81,7 +69,6 @@ se <- SummarizedExperiment(
 )
 colnames(se) <- rownames(experiment_info)
 rownames(se) <- rownames(rowData)
-
 
 ## Prepare design, contrast and model formula
 design <- createDesignMatrix(experiment_info, cols_design = cols_design)
@@ -105,26 +92,23 @@ if(method == "DA_edgeR") {
 } else if(method == "DA_GLMM") {
   res <- testDA_GLMM(se, formula, contrast)
 } else {
-  
-  
-  # colnames(row_dat)[1] <- "cluster_label"
   colnames(row_dat)[2] <- "marker"
   
   list_medians <- df %>%
-    group_by(.ci, .ri) %>%
+    group_by(.ci, .ri, .x) %>%
     summarise(median = median(.y, na.rm = TRUE)) %>%
-    left_join(row_dat, ".ri") %>%
+    # left_join(row_dat, ".ri") %>%
     tidyr::pivot_wider(
-      id_cols = c("marker", ".ri"),
-      names_from = ".ci",
+      id_cols = c(".ri", ".ci"),
+      names_from = ".x",
       values_from = "median",
       values_fill = NA
     ) %>%
     ungroup %>%
-    split(.$marker)
+    split(.$.ri)
   
   medians <- lapply(list_medians, function(x) {
-    x %>% select(-marker, -.ri) %>% as.data.frame()
+    x %>% select(-.ci, -.ri) %>% as.data.frame()
   })
   
   se_meds <- SummarizedExperiment(
@@ -146,13 +130,14 @@ if(method == "DA_edgeR") {
   } else if(method == "DS_LMM") {
     res <- testDS_LMM(se, se_meds, formula, contrast)
   }
-  
 }
 
-rowData(res) %>% 
+df_out <- rowData(res) %>% 
   as_tibble() %>%
-  mutate(cluster_id = as.integer(cluster_id)) %>%
-  mutate(.ri = cluster_id - 1L) %>%
+  mutate(.ci = as.integer(cluster_id) - 1L) %>%
+  mutate_at(vars(matches("marker_id")), as.integer) %>%
+  rename_at(vars(matches("marker_id")), function(x) ".ri") %>%
   select(-cluster_id) %>%
-  ctx$addNamespace() %>%
-  ctx$save()
+  ctx$addNamespace()
+
+ctx$save(df_out)
