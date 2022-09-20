@@ -8,6 +8,8 @@ suppressPackageStartupMessages({
 
 ctx = tercenCtx()
 
+if(length(ctx$rnames) < 2) stop("Two row factors are required.")
+
 method <- ctx$op.value("method", as.character, "DA_edgeR")
 
 first_color <- ctx$colors[[1]][[1]]
@@ -27,18 +29,25 @@ if(length(ctx$labels) > 0) {
 }
 
 df <- ctx$select(unique(c(
-        ".ri", ".ci", ".y",
-        ".axisIndex", ".colorLevels",
-        all_of(first_color), all_of(second_color), all_of(first_label)
-      )))
+  ".ri", ".ci", ".y", ".axisIndex", ".colorLevels",
+  all_of(first_color), all_of(second_color), all_of(first_label)
+)))
+
+row_dat <- ctx$rselect() %>%
+  mutate(.ri = seq_len(nrow(.)) - 1)
+
+first_channel <- unique(row_dat[[2]])[1]
+.ri_idx <- row_dat[row_dat[[2]] == first_channel, ] %>%
+  select(.ri)
 
 counts <- df %>%
   filter(.axisIndex == 0) %>%
+  inner_join(.ri_idx, ".ri") %>%
   tidyr::pivot_wider(
     id_cols = ".ri",
     names_from = ".ci",
     values_from = ".y",
-    values_fn = ~median(.x, na.rm = TRUE),
+    values_fn = list(.y = length),
     values_fill = 0
   ) %>%
   select(-.ri) %>%
@@ -48,9 +57,8 @@ counts <- df %>%
 colData <- ctx$cselect() %>% 
   tidyr::unite("sample_id", sep = " - ") %>%
   mutate(.ci = seq_len(nrow(.)) - 1)
-rowData <- ctx$rselect() %>%
-  mutate(.ri = seq_len(nrow(.)) - 1) %>%
-  mutate(cluster_id = as.factor(.ri + 1)) %>%
+rowData <- row_dat[row_dat[[2]] == first_channel, ] %>%
+  mutate(cluster_id = as.factor(as.numeric(factor(.[[1]])))) %>%
   as.data.frame()
 
 ### experimental design
@@ -97,13 +105,15 @@ if(method == "DA_edgeR") {
 } else if(method == "DA_GLMM") {
   res <- testDA_GLMM(se, formula, contrast)
 } else {
-  if(length(unique(df$.axisIndex)) < 2) stop("Two layers are needed to use a DS method.")
   
-  list_medians <-  df %>% 
-    filter(.axisIndex == 1) %>%
-    mutate(marker = !!sym(second_color)) %>%
-    group_by(.ci, .ri, marker) %>%
+  
+  # colnames(row_dat)[1] <- "cluster_label"
+  colnames(row_dat)[2] <- "marker"
+  
+  list_medians <- df %>%
+    group_by(.ci, .ri) %>%
     summarise(median = median(.y, na.rm = TRUE)) %>%
+    left_join(row_dat, ".ri") %>%
     tidyr::pivot_wider(
       id_cols = c("marker", ".ri"),
       names_from = ".ci",
