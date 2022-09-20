@@ -4,7 +4,7 @@
   "tags": ["flow cytometry", "omics", "statistical testing"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/diffcyt_operator"],
-  "container": "tercen/diffcyt_operator:0.2.0",
+  "container": "tercen/diffcyt_operator:0.2.1",
   "properties": [
   {
     "kind": "EnumeratedProperty",

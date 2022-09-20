@@ -8,14 +8,14 @@
     "sex",
     "color"
   ],
-  "rows": ["variable"],
+  "rows": ["tableId", "variable"],
   "colors": [
     "js0.color"
   ],
   "labels": [],
   "yAxis": "y_values",
   "xAxis": "",
-  "generatedOn": "09/20/2022 01:56:05 PM 2022",
+  "generatedOn": "09/20/2022 02:05:06 PM 2022",
   "version": "",
   "absTol": 1e-05
 }
