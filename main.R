@@ -133,7 +133,7 @@ if(method == "DA_edgeR") {
 df_out <- rowData(res) %>% 
   as_tibble() %>%
   mutate(.ci = as.integer(cluster_id) - 1L) %>%
-  mutate_at(vars(matches("marker_id")), as.integer) %>%
+  mutate_at(vars(matches("marker_id")), function(x) return(as.integer(x) - 1L)) %>%
   rename_at(vars(matches("marker_id")), function(x) ".ri") %>%
   select(-cluster_id) %>%
   ctx$addNamespace()
