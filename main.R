@@ -9,6 +9,7 @@ suppressPackageStartupMessages({
 ctx = tercenCtx()
 
 method <- ctx$op.value("method", as.character, "DA_edgeR")
+reference.index <- ctx$op.value("reference.index", as.double, 2)
 
 first_color <- ctx$colors[[1]][[1]]
 
@@ -57,6 +58,13 @@ experiment_info <- df %>% select(c(".x", all_of(first_color), all_of(first_label
   as.data.frame()
 rownames(experiment_info) <- experiment_info$sample_id
 
+# Reorder factors
+lev <- unique(experiment_info$group_id)
+lev_idx <- c(seq_along(lev)[reference.index], seq_along(lev)[-reference.index]) 
+experiment_info$group_id <- factor(
+  experiment_info$group_id, levels = lev[lev_idx]
+)
+
 colnames(counts) <- rownames(experiment_info)
 rownames(counts) <- rownames(rowData)
 
@@ -72,8 +80,17 @@ rownames(se) <- rownames(rowData)
 
 ## Prepare design, contrast and model formula
 design <- createDesignMatrix(experiment_info, cols_design = cols_design)
-contrast <- createContrast(as.numeric(grepl("group_id", colnames(design))))
 
+group_idx <- as.numeric(grepl("group_id", colnames(design)))
+contrast <- createContrast(group_idx)
+
+cont_all <- contrast[, rep(1, sum(contrast))]
+for(i in seq_len(ncol(cont_all))) {
+  cont_all[, i] <- 0
+  cont_all[i + 1, i] <- 1
+}
+
+##### iterate over possible contrasts
 if(length(ctx$labels) > 0) {
   formula <- createFormula(
     experiment_info,
@@ -129,7 +146,7 @@ if(method == "DA_edgeR") {
     res <- testDS_LMM(se, se_meds, formula, contrast)
   }
 }
-
+######
 df_out <- rowData(res) %>% 
   as_tibble() %>%
   mutate(.ci = as.integer(cluster_id) - 1L) %>%
