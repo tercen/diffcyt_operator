@@ -82,77 +82,90 @@ rownames(se) <- rownames(rowData)
 design <- createDesignMatrix(experiment_info, cols_design = cols_design)
 
 group_idx <- as.numeric(grepl("group_id", colnames(design)))
-contrast <- createContrast(group_idx)
+cont <- createContrast(group_idx)
 
-cont_all <- contrast[, rep(1, sum(contrast))]
-for(i in seq_len(ncol(cont_all))) {
-  cont_all[, i] <- 0
-  cont_all[i + 1, i] <- 1
+if(sum(cont) == 1) {
+  cont_all <- cont
+} else {
+  cont_all <- cont[, rep(1, sum(cont))]
+  for(i in seq_len(ncol(cont_all))) {
+    cont_all[, i] <- 0
+    cont_all[i + 1, i] <- 1
+  }
 }
 
 ##### iterate over possible contrasts
-if(length(ctx$labels) > 0) {
-  formula <- createFormula(
-    experiment_info,
-    cols_fixed = "group_id",
-    cols_random = "patient_id"
-  )
-} else {
-  formula <- createFormula(
-    experiment_info,
-    cols_fixed = "group_id"
-  )
+results <- list()
+for(i in seq_len(ncol(cont_all))) {
+  
+  contrast <- cont_all[, i]
+  if(length(ctx$labels) > 0) {
+    formula <- createFormula(
+      experiment_info,
+      cols_fixed = "group_id",
+      cols_random = "patient_id"
+    )
+  } else {
+    formula <- createFormula(
+      experiment_info,
+      cols_fixed = "group_id"
+    )
+  }
+  
+  if(method == "DA_edgeR") {
+    res <- testDA_edgeR(se, design, contrast)
+  } else if(method == "DA_GLMM") {
+    res <- testDA_GLMM(se, formula, contrast)
+  } else {
+    list_medians <- df %>%
+      group_by(.ci, .ri, .x) %>%
+      summarise(median = median(.y, na.rm = TRUE)) %>%
+      # left_join(row_dat, ".ri") %>%
+      tidyr::pivot_wider(
+        id_cols = c(".ri", ".ci"),
+        names_from = ".x",
+        values_from = "median",
+        values_fill = NA
+      ) %>%
+      ungroup %>%
+      split(.$.ri)
+    
+    medians <- lapply(list_medians, function(x) {
+      x %>% select(-.ci, -.ri) %>% as.data.frame()
+    })
+    
+    se_meds <- SummarizedExperiment(
+      assays = medians,
+      rowData = rowData,
+      colData = experiment_info[, "group_id"]
+    )
+    colnames(se_meds) <- rownames(experiment_info)
+    rownames(se_meds) <- rownames(rowData)
+    
+    # assumption: all the provided markers are state markers
+    metadata(se_meds) <- list(
+      id_type_markers = rep(FALSE, length(medians)),
+      id_state_markers = rep(TRUE, length(medians))
+    )
+    
+    if(method == "DS_limma") {
+      res <- testDS_limma(se, se_meds, design, contrast)
+    } else if(method == "DS_LMM") {
+      res <- testDS_LMM(se, se_meds, formula, contrast)
+    }
+  }
+  results[[i]] <- rowData(res) %>% 
+    as_tibble() %>%
+    mutate(.ci = as.integer(cluster_id) - 1L) %>%
+    mutate_at(vars(matches("marker_id")), function(x) return(as.integer(x) - 1L)) %>%
+    rename_at(vars(matches("marker_id")), function(x) ".ri") %>%
+    select(-cluster_id) %>%
+    mutate(group_1 = as.character(lev[1]), group_2 = as.character(lev[which(as.logical(contrast))])) %>%
+    relocate(group_1, group_2)
 }
 
-if(method == "DA_edgeR") {
-  res <- testDA_edgeR(se, design, contrast)
-} else if(method == "DA_GLMM") {
-  res <- testDA_GLMM(se, formula, contrast)
-} else {
-  list_medians <- df %>%
-    group_by(.ci, .ri, .x) %>%
-    summarise(median = median(.y, na.rm = TRUE)) %>%
-    # left_join(row_dat, ".ri") %>%
-    tidyr::pivot_wider(
-      id_cols = c(".ri", ".ci"),
-      names_from = ".x",
-      values_from = "median",
-      values_fill = NA
-    ) %>%
-    ungroup %>%
-    split(.$.ri)
-  
-  medians <- lapply(list_medians, function(x) {
-    x %>% select(-.ci, -.ri) %>% as.data.frame()
-  })
-  
-  se_meds <- SummarizedExperiment(
-    assays = medians,
-    rowData = rowData,
-    colData = experiment_info[, "group_id"]
-  )
-  colnames(se_meds) <- rownames(experiment_info)
-  rownames(se_meds) <- rownames(rowData)
-  
-  # assumption: all the provided markers are state markers
-  metadata(se_meds) <- list(
-    id_type_markers = rep(FALSE, length(medians)),
-    id_state_markers = rep(TRUE, length(medians))
-  )
-  
-  if(method == "DS_limma") {
-    res <- testDS_limma(se, se_meds, design, contrast)
-  } else if(method == "DS_LMM") {
-    res <- testDS_LMM(se, se_meds, formula, contrast)
-  }
-}
-######
-df_out <- rowData(res) %>% 
-  as_tibble() %>%
-  mutate(.ci = as.integer(cluster_id) - 1L) %>%
-  mutate_at(vars(matches("marker_id")), function(x) return(as.integer(x) - 1L)) %>%
-  rename_at(vars(matches("marker_id")), function(x) ".ri") %>%
-  select(-cluster_id) %>%
+df_out <- results %>% 
+  bind_rows() %>%
   ctx$addNamespace()
 
 ctx$save(df_out)
