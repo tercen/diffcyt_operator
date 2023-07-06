@@ -8,16 +8,10 @@ suppressPackageStartupMessages({
 
 ctx = tercenCtx()
 
-method <- ctx$op.value("method", as.character, "DA_edgeR")
-reference.index <- ctx$op.value("reference.index", as.double, 2)
+method <- ctx$op.value("method", as.character, "DS_limma")
+reference.index <- ctx$op.value("reference.index", as.double, 1)
 
 first_color <- ctx$colors[[1]][[1]]
-
-if(length(ctx$colors) > 1) {
-  second_color <- ctx$colors[[2]][[1]]
-} else {
-  second_color <- NULL
-}
 
 if(length(ctx$labels) > 0) {
   first_label <- ctx$labels[[1]]
@@ -29,7 +23,7 @@ if(length(ctx$labels) > 0) {
 
 df <- ctx$select(unique(c(
   ".ri", ".ci", ".y", ".x", ".colorLevels",
-  all_of(first_color), all_of(second_color), all_of(first_label)
+  all_of(first_color), all_of(first_label)
 )))
 
 row_dat <- ctx$cselect() %>%
@@ -113,7 +107,7 @@ for(i in seq_len(ncol(cont_all))) {
   }
   
   if(method == "DA_edgeR") {
-    res <- testDA_edgeR(se, design, contrast)
+    res <- testDA_edgeR(se, design[colnames(se),], contrast)
   } else if(method == "DA_GLMM") {
     res <- testDA_GLMM(se, formula, contrast)
   } else {
@@ -139,7 +133,7 @@ for(i in seq_len(ncol(cont_all))) {
       rowData = rowData,
       colData = experiment_info[, "group_id"]
     )
-    colnames(se_meds) <- rownames(experiment_info)
+    # colnames(se_meds) <- rownames(experiment_info)
     rownames(se_meds) <- rownames(rowData)
     
     # assumption: all the provided markers are state markers
@@ -149,7 +143,7 @@ for(i in seq_len(ncol(cont_all))) {
     )
     
     if(method == "DS_limma") {
-      res <- testDS_limma(se, se_meds, design, contrast)
+      res <- testDS_limma(se, se_meds, design[colnames(se_meds),], contrast)
     } else if(method == "DS_LMM") {
       res <- testDS_LMM(se, se_meds, formula, contrast)
     }
@@ -162,6 +156,8 @@ for(i in seq_len(ncol(cont_all))) {
     select(-cluster_id) %>%
     mutate(group_1 = as.character(lev[1]), group_2 = as.character(lev[which(as.logical(contrast))])) %>%
     relocate(group_1, group_2)
+  
+  
 }
 
 df_out <- results %>% 
