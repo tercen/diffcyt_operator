@@ -17,8 +17,7 @@ Input projection|.
 Input parameters|.
 ---|---
 `method`          | statistical method to be used (any of `DA_edgeR` or `DA_GLMM` for Differential Abundance, or `DS_limma` or `DS_LMM` for Differential State)
-`reference.index` | Index of the reference category to be used. Default is 1, meaning that the first color specified in the crosstab will be used as a reference. In
-case more than 2 colors are present in the data, each of them will be compared to the reference group.
+`reference.index` | Index of the reference category to be used. Default is 1, meaning that the first color specified in the crosstab will be used as a reference. In case more than 2 colors are present in the data, each of them will be compared to the reference group.
 
 Output relations|.
 ---|---
