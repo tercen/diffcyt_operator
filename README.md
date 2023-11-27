@@ -25,7 +25,7 @@ Output relations|.
 `logCPM`    | log of counts per million
 `LR`        | likelihood ratio
 `p_val`     | p-value
-`p_val`     | adjusted p-value
+`p_adj`     | adjusted p-value
 `group_1`     | First group in the comparison
 `group_2`     | Second group in the comparison
 
