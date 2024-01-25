@@ -1,28 +1,36 @@
 {
   "name": "diffcyt",
   "description": "Statistical methods for differential discovery analyses in high-dimensional cytometry data.",
-  "tags": ["flow cytometry", "omics", "statistical testing"],
-  "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/diffcyt_operator"],
+  "tags": [
+    "flow cytometry",
+    "omics",
+    "statistical testing"
+  ],
+  "authors": [
+    "tercen"
+  ],
+  "urls": [
+    "https://github.com/tercen/diffcyt_operator"
+  ],
   "container": "tercen/diffcyt_operator:0.4.2",
   "properties": [
-  {
-    "kind": "EnumeratedProperty",
-    "name": "method",
-    "defaultValue": "DA_edgeR",
-    "values": [
-      "DA_edgeR",
-      "DA_GLMM",
-      "DS_limma",
-      "DS_LMM"
-    ],
-    "description": "Statistical method to be used."
-  },
     {
-    "kind": "DoubleProperty",
-    "name": "reference.index",
-    "defaultValue": 1,
-    "description": "Indexd of the reference category to be used."
-  }
+      "kind": "EnumeratedProperty",
+      "name": "method",
+      "defaultValue": "DA_edgeR",
+      "values": [
+        "DA_edgeR",
+        "DA_GLMM",
+        "DS_limma",
+        "DS_LMM"
+      ],
+      "description": "Statistical method to be used."
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "reference.index",
+      "defaultValue": 1,
+      "description": "Indexd of the reference category to be used."
+    }
   ]
 }
