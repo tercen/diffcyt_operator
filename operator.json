@@ -1,6 +1,6 @@
 {
   "name": "diffcyt",
-  "description": "Statistical methods for differential discovery analyses in high-dimensional cytometry data.",
+  "description": "Applies statistical methods for differential discovery analyses in high-dimensional cytometry data.",
   "tags": [
     "flow cytometry",
     "omics",
