@@ -32,5 +32,74 @@
       "defaultValue": 1,
       "description": "Indexd of the reference category to be used."
     }
-  ]
+  ],
+  "operatorSpec": {
+    "kind": "OperatorSpec",
+    "ontologyUri": "https://tercen.com/_ontology/tercen",
+    "ontologyVersion": "0.0.1",
+    "inputSpecs": [
+      {
+        "kind": "CrosstabSpec",
+        "metaFactors": [
+          {
+            "kind": "MetaFactor",
+            "name": "Cluster IDs",
+            "type": "",
+            "description": "Factor representing cluster IDs.",
+            "ontologyMapping": "variable",
+            "crosstabMapping": "row",
+            "cardinality": "1..n",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Sample IDs",
+            "type": "",
+            "description": "Factor representing sample IDs.",
+            "ontologyMapping": "observation",
+            "crosstabMapping": "column",
+            "cardinality": "1..n",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Group IDs",
+            "type": "",
+            "description": "Factor representing group IDs (fixed effect).",
+            "ontologyMapping": "group",
+            "crosstabMapping": "colors",
+            "cardinality": "1..n",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Patient/Batch IDs",
+            "type": "",
+            "description": "Optional factor representing patient or batch IDs (random effect).",
+            "ontologyMapping": "batch",
+            "crosstabMapping": "labels",
+            "cardinality": "0..n",
+            "factors": []
+          }
+        ],
+        "axis": [
+          {
+            "kind": "AxisSpec",
+            "metaFactors": [
+              {
+                "kind": "MetaFactor",
+                "name": "Cell Count",
+                "type": "numeric",
+                "description": "Numeric value representing cell count.",
+                "ontologyMapping": "measurement",
+                "crosstabMapping": "y",
+                "cardinality": "1",
+                "factors": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
