@@ -8,9 +8,10 @@ Statistical methods for differential discovery analyses in high-dimensional cyto
 
 Input projection|.
 ---|---
-`y-axis`        | numeric, cell count
-`row`           | factor, cluster IDs 
-`column`        | factor, sample IDs 
+`y-axis`        | numeric, measurement value
+`x-axis`        | factor, sample IDs
+`row`           | factor, channel / marker ID / name 
+`column`        | factor, cluster IDs 
 `colors`        | factor, group IDs (fixed effect)
 `labels`        | factor, optional, patient / batch IDs (random effect)
 
