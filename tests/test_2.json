@@ -1,0 +1,20 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "test_2",
+  "namespace": "ds0",
+  "inputDataUri": "test_2_in.csv",
+  "outputDataUri": ["test_2_out_1.csv"],
+  "columns": ["sample_id"],
+  "rows": ["cluster_id"],
+  "colors": ["group_id"],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": "",
+  "generatedOn": "",
+  "version": "",
+  "absTol": 0.01,
+  "operatorSettings": {
+    "method": "DA_edgeR",
+    "reference.index": 1
+  }
+}

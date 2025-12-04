@@ -1,0 +1,20 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "test_1",
+  "namespace": "ds0",
+  "inputDataUri": "test_1_in.csv",
+  "outputDataUri": ["test_1_out_1.csv"],
+  "columns": ["sample_id"],
+  "rows": ["cluster_id", "marker_id"],
+  "colors": ["group_id"],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": "",
+  "generatedOn": "",
+  "version": "",
+  "absTol": 0.01,
+  "operatorSettings": {
+    "method": "DS_limma",
+    "reference.index": 1
+  }
+}
