@@ -24,13 +24,93 @@
         "DS_limma",
         "DS_LMM"
       ],
-      "description": "Statistical method to be used."
+      "description": "Statistical method to be used. DA methods test for Differential Abundance of clusters. DS methods test for Differential State of markers within clusters."
     },
     {
       "kind": "DoubleProperty",
       "name": "reference.index",
       "defaultValue": 1,
-      "description": "Indexd of the reference category to be used."
+      "description": "Index of the reference category to be used. Default is 1, meaning the first color (group) will be used as reference. If more than 2 groups are present, each will be compared to the reference."
     }
-  ]
+  ],
+  "operatorSpec": {
+    "kind": "OperatorSpec",
+    "ontologyUri": "https://tercen.com/_ontology/tercen",
+    "ontologyVersion": "0.0.1",
+    "inputSpecs": [
+      {
+        "kind": "CrosstabSpec",
+        "metaFactors": [
+          {
+            "kind": "MetaFactor",
+            "name": "Cluster",
+            "type": "character",
+            "description": "Cluster identifiers from cell population clustering.",
+            "ontologyMapping": "cluster",
+            "crosstabMapping": "column",
+            "cardinality": "1..n",
+            "factors": []
+          },
+          {
+            "kind": "MetaFactor",
+            "name": "Marker",
+            "type": "character",
+            "description": "Marker/channel identifiers. Required for DS (Differential State) methods.",
+            "ontologyMapping": "marker",
+            "crosstabMapping": "row",
+            "cardinality": "0..n",
+            "factors": []
+          }
+        ],
+        "axis": [
+          {
+            "kind": "AxisSpec",
+            "metaFactors": [
+              {
+                "kind": "MetaFactor",
+                "name": "Measurement",
+                "type": "numeric",
+                "description": "Measurement values per cell (marker expression or cell counts).",
+                "ontologyMapping": "measurement",
+                "crosstabMapping": "y",
+                "cardinality": "1",
+                "factors": []
+              },
+              {
+                "kind": "MetaFactor",
+                "name": "Sample",
+                "type": "character",
+                "description": "Sample identifiers.",
+                "ontologyMapping": "sample",
+                "crosstabMapping": "x",
+                "cardinality": "1",
+                "factors": []
+              },
+              {
+                "kind": "MetaFactor",
+                "name": "Group",
+                "type": "character",
+                "description": "Group identifiers for comparison (fixed effect), e.g., treatment vs control.",
+                "ontologyMapping": "group",
+                "crosstabMapping": "color",
+                "cardinality": "1",
+                "factors": []
+              },
+              {
+                "kind": "MetaFactor",
+                "name": "Patient",
+                "type": "character",
+                "description": "Patient or batch identifiers (random effect). Optional, used for mixed models (DA_GLMM, DS_LMM).",
+                "ontologyMapping": "patient",
+                "crosstabMapping": "label",
+                "cardinality": "0..1",
+                "factors": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "outputSpecs": []
+  }
 }

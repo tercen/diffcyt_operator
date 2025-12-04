@@ -37,4 +37,3 @@ Output relations|.
 > Weber, L.M., Nowicka, M., Soneson, C. et al. diffcyt: Differential discovery in high-dimensional cytometry via high-resolution clustering. Commun Biol 2, 183 (2019). 
 
 [Publication](https://doi.org/10.1038/s42003-019-0415-5)
-
