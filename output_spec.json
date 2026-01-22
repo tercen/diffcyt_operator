@@ -1,60 +1,116 @@
 {
-  "outputSpecs": [{
-    "kind": "ConditionalJoinSpec",
-    "description": "Output varies based on analysis type (DA vs DS methods)",
-    "alternatives": [
-      {
-        "kind": "OutputAlternative",
-        "condition": "Differential Abundance (DA) methods",
-        "joinSpec": {
-          "kind": "OperatorJoinSpec",
-          "joinOperators": [{
-            "kind": "JoinOperator",
-            "joinType": "left",
-            "leftPair": {
-              "kind": "ColumnPair",
-              "lColumns": ["Cluster"],
-              "rColumns": ["Cluster"]
-            },
-            "rightRelation": {
-              "kind": "TableRelation",
-              "attributes": [
-                {"kind": "Attribute", "name": "group_1", "type": "string"},
-                {"kind": "Attribute", "name": "group_2", "type": "string"},
-                {"kind": "Attribute", "name": "p_value", "type": "double"},
-                {"kind": "Attribute", "name": "padj", "type": "double"},
-                {"kind": "Attribute", "name": "logFC", "type": "double"}
-              ]
-            }
-          }]
+  "outputSpecsV2": [
+    {
+      "kind": "ConditionalJoinSpec",
+      "description": "Output varies based on analysis type (DA vs DS methods)",
+      "alternatives": [
+        {
+          "kind": "OutputAlternative",
+          "condition": "Differential Abundance (DA) methods",
+          "joinSpec": {
+            "kind": "OperatorJoinSpec",
+            "joinOperators": [
+              {
+                "kind": "JoinOperator",
+                "joinType": "left",
+                "leftPair": {
+                  "kind": "ColumnPair",
+                  "lColumns": [
+                    "Cluster"
+                  ],
+                  "rColumns": [
+                    "Cluster"
+                  ]
+                },
+                "rightRelation": {
+                  "kind": "TableRelation",
+                  "attributes": [
+                    {
+                      "kind": "Attribute",
+                      "name": "group_1",
+                      "type": "string"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "group_2",
+                      "type": "string"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "p_value",
+                      "type": "double"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "padj",
+                      "type": "double"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "logFC",
+                      "type": "double"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kind": "OutputAlternative",
+          "condition": "Differential State (DS) methods",
+          "joinSpec": {
+            "kind": "OperatorJoinSpec",
+            "joinOperators": [
+              {
+                "kind": "JoinOperator",
+                "joinType": "left",
+                "leftPair": {
+                  "kind": "ColumnPair",
+                  "lColumns": [
+                    "Cluster",
+                    "Marker"
+                  ],
+                  "rColumns": [
+                    "Cluster",
+                    "Marker"
+                  ]
+                },
+                "rightRelation": {
+                  "kind": "TableRelation",
+                  "attributes": [
+                    {
+                      "kind": "Attribute",
+                      "name": "group_1",
+                      "type": "string"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "group_2",
+                      "type": "string"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "p_value",
+                      "type": "double"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "padj",
+                      "type": "double"
+                    },
+                    {
+                      "kind": "Attribute",
+                      "name": "logFC",
+                      "type": "double"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         }
-      },
-      {
-        "kind": "OutputAlternative",
-        "condition": "Differential State (DS) methods",
-        "joinSpec": {
-          "kind": "OperatorJoinSpec",
-          "joinOperators": [{
-            "kind": "JoinOperator",
-            "joinType": "left",
-            "leftPair": {
-              "kind": "ColumnPair",
-              "lColumns": ["Cluster", "Marker"],
-              "rColumns": ["Cluster", "Marker"]
-            },
-            "rightRelation": {
-              "kind": "TableRelation",
-              "attributes": [
-                {"kind": "Attribute", "name": "group_1", "type": "string"},
-                {"kind": "Attribute", "name": "group_2", "type": "string"},
-                {"kind": "Attribute", "name": "p_value", "type": "double"},
-                {"kind": "Attribute", "name": "padj", "type": "double"},
-                {"kind": "Attribute", "name": "logFC", "type": "double"}
-              ]
-            }
-          }]
-        }
-      }
-    ]
-  }]
+      ]
+    }
+  ]
 }
