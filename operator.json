@@ -46,7 +46,7 @@
             "name": "Cluster",
             "type": "character",
             "description": "Cluster identifiers from cell population clustering.",
-            "ontologyMapping": "cluster",
+            "ontologyMapping": "observation",
             "crosstabMapping": "column",
             "cardinality": "1..n",
             "factors": []
@@ -56,7 +56,7 @@
             "name": "Marker",
             "type": "character",
             "description": "Marker/channel identifiers. Required for DS (Differential State) methods.",
-            "ontologyMapping": "marker",
+            "ontologyMapping": "variable",
             "crosstabMapping": "row",
             "cardinality": "0..n",
             "factors": []
@@ -81,7 +81,7 @@
                 "name": "Sample",
                 "type": "character",
                 "description": "Sample identifiers.",
-                "ontologyMapping": "sample",
+                "ontologyMapping": "group",
                 "crosstabMapping": "x",
                 "cardinality": "1",
                 "factors": []
