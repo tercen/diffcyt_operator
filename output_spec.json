@@ -4,6 +4,7 @@
     "description": "Output varies based on analysis type (DA vs DS methods)",
     "alternatives": [
       {
+        "kind": "OutputAlternative",
         "condition": "Differential Abundance (DA) methods",
         "joinSpec": {
           "kind": "OperatorJoinSpec",
@@ -29,6 +30,7 @@
         }
       },
       {
+        "kind": "OutputAlternative",
         "condition": "Differential State (DS) methods",
         "joinSpec": {
           "kind": "OperatorJoinSpec",
