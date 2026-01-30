@@ -149,12 +149,12 @@
                       },
                       {
                         "kind": "Attribute",
-                        "name": "p_value",
+                        "name": "p_val",
                         "type": "double"
                       },
                       {
                         "kind": "Attribute",
-                        "name": "padj",
+                        "name": "p_adj",
                         "type": "double"
                       },
                       {
@@ -203,12 +203,12 @@
                       },
                       {
                         "kind": "Attribute",
-                        "name": "p_value",
+                        "name": "p_val",
                         "type": "double"
                       },
                       {
                         "kind": "Attribute",
-                        "name": "padj",
+                        "name": "p_adj",
                         "type": "double"
                       },
                       {
