@@ -69,7 +69,7 @@
               {
                 "kind": "MetaFactor",
                 "name": "Measurement",
-                "type": "numeric",
+                "type": "double",
                 "description": "Measurement values per cell (marker expression or cell counts).",
                 "ontologyMapping": "measurement",
                 "crosstabMapping": "y",
